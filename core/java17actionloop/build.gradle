@@ -14,32 +14,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 plugins {
-    id 'java'
-    id 'idea'
-    id 'eclipse'
-    id 'cz.alenkacz.gradle.scalafmt' version "${scalamftVersion}"
+    id 'java-library'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-subprojects {
-    gradle.ext.scalafmt.configFilePath = gradle.ext.scalafmt.config
-    pluginManager.apply("cz.alenkacz.gradle.scalafmt")
+ext.dockerImageName = 'actionloop-java-v17'
+apply from: '../../gradle/docker.gradle'
+
+
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+        vendor = JvmVendorSpec.ADOPTOPENJDK
+    }
+//    targetCompatibility(JavaVersion.VERSION_17)
+//    sourceCompatibility(JavaVersion.VERSION_17)
 }
-allprojects {
-    repositories {
-    mavenLocal()
-    mavenCentral()
-        maven {
-            url 'https://repo.grails.org/artifactory/core/'
-            metadataSources {
-                mavenPom()
-                artifact()
-            }
+jar {
+    archivesBaseName = 'launcher'
+    manifest {
+        attributes('Class-Path' : '/javaAction/*, launcher.jar' )
+    }
+    finalizedBy("shadowJar")
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'lib/src'
         }
     }
 }
+
 dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'io.vavr:vavr:0.10.4'
 }
 
+shadowJar {
+    archiveFileName.set("launcher.jar")
+}
 
