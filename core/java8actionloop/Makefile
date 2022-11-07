@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-IMG=actionloop-java-v8:nightly
+IMG=action-java-v8:nightly
 PREFIX=docker.io/openwhisk
 INVOKE=python ../../tools/invoke.py
 MAIN_JAR=../../example/main.jar

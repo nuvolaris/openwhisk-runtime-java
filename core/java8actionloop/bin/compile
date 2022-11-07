@@ -87,7 +87,7 @@ def write_exec(target_dir, classpath, main):
     jars.append(target_dir)
     cmd = """#!/bin/bash
 cd "%s"
-/opt/java/openjdk/bin/java -Dfile.encoding=UTF-8 -cp "%s" Launcher "%s" "$@"
+java -Dfile.encoding=UTF-8 -cp "%s" Launcher "%s" "$@"
 """ %( target_dir, ":".join(classpath+jars), main)
     with codecs.open(launcher, 'w', 'utf-8') as d:
         d.write(cmd)
@@ -106,7 +106,8 @@ def assemble(argv):
     logging.info("%s %s", mainClass, mainMethod)
     source_dir = os.path.abspath(argv[2])
     target_dir = os.path.abspath(argv[3])
-    classpath = ["/usr/java/lib/launcher.jar", "/usr/java/lib/gson-2.8.5.jar"]
+    lib_dir = "/usr/java/lib/"
+    classpath = map(lambda x: lib_dir+x, os.listdir(lib_dir))
 
     # build   
     if build(source_dir, classpath, target_dir, mainClass):
@@ -125,5 +126,5 @@ if __name__ == '__main__':
     if len(sys.argv) < 4:
         sys.stdout.write("usage: <main-class> <source-dir> <target-dir>\n")
         sys.exit(1)
-    logging.basicConfig(filename="/var/log/compile.log")
+    logging.basicConfig(filename="/home/compile.log")
     assemble(sys.argv)

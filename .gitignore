@@ -40,6 +40,7 @@ bin/
 .gradle
 build/
 !/tools/build/
+target/
 
 # Python
 .ipynb_checkpoints/
